@@ -1,0 +1,40 @@
+---
+- name: Configure docker containers
+  hosts: localhost
+  gather_facts: no
+  any_errors_fatal: true
+  become: yes
+  vars:
+    network_name: iperf_testing
+    network_subnet: 172.16.19.0/24
+    network_gateway: 172.16.19.1
+    network_iprange: 172.16.19.0/24
+    nginx_container_name: automation_nginx
+    nginx_port: 80
+    nginx_root: ../data
+    nginx_config_file: ../config/nginx/nginx.conf
+    nginx_default_file: ../config/nginx/conf.d/default.conf
+  tasks:
+    - name: Create network with custom IPAM config
+      community.docker.docker_network:
+        name: "{{ network_name }}"
+        driver: bridge
+        ipam_config:
+          - subnet: "{{ network_subnet }}"
+            gateway: "{{ network_gateway }}"
+            iprange: "{{ network_iprange }}"
+
+    - name: Create an Nginx container
+      community.docker.docker_container:
+        name: "{{ nginx_container_name }}"
+        image: nginx
+        restart_policy: always
+        ports:
+          - "80:{{ nginx_port }}"
+        networks:
+          - name: "{{ network_name }}"
+        volumes:
+          - "{{ nginx_root }}:/usr/share/nginx/html:ro"
+          - "{{ nginx_config_file }}:/etc/nginx/nginx.conf:ro"
+          - "{{ nginx_default_file }}:/etc/nginx/conf.d/default.conf:ro"
+
