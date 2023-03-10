@@ -5,5 +5,6 @@ This is a simple ansible script to setup a local nginx web server to server temp
 This project was tested on Ubuntu 22.04. 
 
 ## Folder
-* **data** will contain the temmplates and files
+* **files** will contain additional supporting files
+* **data** will contain the templates and files
 * **results** will contain the published tests results
