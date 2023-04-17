@@ -17,10 +17,12 @@
     template_directory: ../data/ova
     template_files:
       - https://storage.googleapis.com/workload-automation/templates/rhel-8.5-x64-cloud-init.ova
+      - https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.ova
     support_files_directory: ../data/files
     support_files:
       - https://storage.googleapis.com/workload-automation/dlm/dlm-4.1.0-1.el8.src.rpm
       - https://storage.googleapis.com/workload-automation/dlm/dlm-4.1.0-1.el8.x86_64.rpm
+      - https://packages.confluent.io/archive/7.3/confluent-7.3.3.tar.gz
 
   tasks:
     - name: Create network with custom IPAM config
@@ -50,12 +52,12 @@
       ansible.builtin.get_url:
         url: "{{ item }}"
         dest: "{{ template_directory }}"
-        mode: '0440'
+        mode: '0444'
       with_items: "{{ template_files }}"
 
     - name: Download support files
       ansible.builtin.get_url:
         url: "{{ item }}"
         dest: "{{ support_files_directory }}"
-        mode: '0440'
+        mode: '0444'
       with_items: "{{ support_files }}"
