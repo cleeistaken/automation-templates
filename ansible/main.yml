@@ -5,23 +5,25 @@
   any_errors_fatal: true
   become: yes
   vars:
-    network_name: iperf_testing
-    network_subnet: 172.16.19.0/24
-    network_gateway: 172.16.19.1
-    network_iprange: 172.16.19.0/24
+    network_name: automation_templates
+    network_subnet: 172.31.1.0/24
+    network_gateway: 172.31.1.1
+    network_iprange: 172.31.1.0/24
     nginx_container_name: automation_nginx
     nginx_port: 80
     nginx_root: ../data
     nginx_config_file: ../config/nginx/nginx.conf
     nginx_default_file: ../config/nginx/conf.d/default.conf
+    nginx_mime_types_file: ../config/nginx/mime.types
     template_directory: ../data/ova
     template_files:
-      - https://storage.googleapis.com/workload-automation/templates/rhel-8.5-x64-cloud-init.ova
+      - https://storage.googleapis.com/workload-automation/templates/rhel-8.7-cloud-init.ova
       - https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.ova
     support_files_directory: ../data/files
     support_files:
       - https://storage.googleapis.com/workload-automation/dlm/dlm-4.1.0-1.el8.src.rpm
       - https://storage.googleapis.com/workload-automation/dlm/dlm-4.1.0-1.el8.x86_64.rpm
+      - https://packages.confluent.io/archive/6.2/confluent-6.2.10.tar.gz
       - https://packages.confluent.io/archive/7.3/confluent-7.3.3.tar.gz
 
   tasks:
@@ -47,6 +49,7 @@
           - "{{ nginx_root }}:/usr/share/nginx/html:ro"
           - "{{ nginx_config_file }}:/etc/nginx/nginx.conf:ro"
           - "{{ nginx_default_file }}:/etc/nginx/conf.d/default.conf:ro"
+          - "{{ nginx_mime_types_file }}:/etc/nginx/mime.types:ro"
 
     - name: Download OVA templates
       ansible.builtin.get_url:
